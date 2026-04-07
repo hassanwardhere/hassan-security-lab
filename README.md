@@ -80,7 +80,7 @@ to preserve SSD lifespan and maximise storage capacity.
 ---
 
 ## Repository Structure
-homelab/
+hassan-security-lab/
 ├── README.md                  ← You are here
 ├── setup/
 │   ├── docker-setup.md        ← Docker and Portainer installation
@@ -138,4 +138,5 @@ Targeting SOC Analyst, Security Engineer, and IT Risk roles across
 Kenya, South Africa, and Europe.
 
 GitHub: [hassanwardhere](https://github.com/hassanwardhere)  
-LinkedIn: https://www.linkedin.com/in/hassan-abdullahi-/
+LinkedIn: https://www.linkedin.com/in/hassan-abdullahi-/  
+Portfolio: [hassanahassan.com](https://hassanahassan.com)
