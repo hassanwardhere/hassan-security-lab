@@ -1,142 +1,85 @@
-# Hassan's Cybersecurity Home Lab
+# Hassan Security Lab — Personal Cybersecurity Homelab
 
-## Overview
-
-This repository documents the design, deployment, and operation of a 
-personal cybersecurity home lab built from the ground up on Ubuntu 24.04 
-LTS. The lab simulates a real-world Security Operations Centre (SOC) 
-environment, providing hands-on experience with industry-standard open 
-source security tools used by professionals across MSSP, banking, and 
-enterprise environments.
-
-Every tool deployed here mirrors what is expected in roles such as SOC 
-Analyst, Cybersecurity Engineer, and IT Risk Officer positions across 
-Kenya, East Africa, and Europe.
+This is a personal SOC learning environment built to practice detection engineering on Ubuntu Desktop 24.04. It runs open-source security tooling on a single laptop in my home network, and exists so I can get hands-on experience with SIEM deployment, log onboarding, rule writing, and incident triage outside of coursework.
 
 ---
 
-## Hardware Specifications
+## Hardware
 
-| Component | Details                          |
-|-----------|----------------------------------|
-| Device    | HP Envy Laptop                   |
-| CPU       | AMD A12-9720P, 4 Cores           |
-| RAM       | 16GB                             |
-| Storage   | 256GB SSD (OS) + 1TB HDD (Data)  |
-| OS        | Ubuntu 24.04.4 LTS               |
-| Network   | Ethernet + WiFi                  |
-
----
-
-## Architecture
-
-All tools run as isolated Docker containers managed through Portainer. 
-Container data and logs are stored on the 1TB HDD mounted at /mnt/hdd 
-to preserve SSD lifespan and maximise storage capacity.
-┌─────────────────────────────────────────┐
-│           Ubuntu 24.04 LTS              │
-│                                         │
-│  ┌─────────────────────────────────┐    │
-│  │         Docker Engine           │    │
-│  │                                 │    │
-│  │  ┌──────────┐  ┌─────────────┐  │    │
-│  │  │  Wazuh   │  │  ELK Stack  │  │    │
-│  │  │  (SIEM)  │  │  (Logging)  │  │    │
-│  │  └──────────┘  └─────────────┘  │    │
-│  │                                 │    │
-│  │  ┌──────────┐  ┌─────────────┐  │    │
-│  │  │  Snort   │  │Velociraptor │  │    │
-│  │  │ (IDS/IPS)│  │   (EDR)     │  │    │
-│  │  └──────────┘  └─────────────┘  │    │
-│  │                                 │    │
-│  │  ┌──────────┐  ┌─────────────┐  │    │
-│  │  │ Shuffle  │  │    MISP     │  │    │
-│  │  │  (SOAR)  │  │(Threat Intel│  │    │
-│  │  └──────────┘  └─────────────┘  │    │
-│  │                                 │    │
-│  │  ┌──────────────────────────┐   │    │
-│  │  │    Portainer (Manager)   │   │    │
-│  │  └──────────────────────────┘   │    │
-│  └─────────────────────────────────┘    │
-│                                         │
-│  SSD: OS + Docker    HDD: All Data      │
-└─────────────────────────────────────────┘
+| Component | Details                                  |
+|-----------|------------------------------------------|
+| Device    | HP Envy laptop                           |
+| CPU       | AMD A12-9720P (4 cores)                  |
+| RAM       | 14 GB                                    |
+| Storage   | 256 GB NVMe SSD (root) + 1 TB HDD        |
+| HDD mount | `/mnt/hdd`                               |
+| OS        | Ubuntu Desktop 24.04                     |
 
 ---
 
-## Tools Deployed
+## Status
 
-| Tool          | Category          | Purpose                                      | Status      |
-|---------------|-------------------|----------------------------------------------|-------------|
-| Docker        | Infrastructure    | Container engine for all tools               | ✅ Complete |
-| Portainer     | Infrastructure    | Visual Docker management interface           | ✅ Complete |
-| Wazuh         | SIEM              | Security event monitoring and alerting       | 🔄 In Progress |
-| ELK Stack     | Log Analysis      | Log ingestion, search, and visualisation     | ⏳ Pending  |
-| Snort         | IDS/IPS           | Network intrusion detection and prevention   | ⏳ Pending  |
-| Velociraptor  | EDR               | Endpoint detection and response              | ⏳ Pending  |
-| Shuffle       | SOAR              | Security orchestration and automated response| ⏳ Pending  |
-| MISP          | Threat Intel      | Malware information sharing and threat feeds | ⏳ Pending  |
+| Tool                          | Status       | Notes                                                                                  |
+|-------------------------------|--------------|----------------------------------------------------------------------------------------|
+| Wazuh 4.14.5 (single-node)    | ✅ Deployed  | Manager + Indexer + Dashboard via official docker-compose, data on HDD                 |
+| ELK Stack                     | ⏳ Planned   | Folder placeholder only                                                                |
+| Snort IDS                     | ⏳ Planned   | Folder placeholder only                                                                |
+| Velociraptor                  | ⏳ Planned   | Folder placeholder only                                                                |
+| MISP                          | ⏳ Planned   | Folder placeholder only                                                                |
+| Shuffle SOAR                  | ⏳ Planned   | Folder placeholder only                                                                |
 
 ---
 
-## Repository Structure
-hassan-security-lab/
-├── README.md                  ← You are here
-├── setup/
-│   ├── docker-setup.md        ← Docker and Portainer installation
-│   └── screenshots/           ← Terminal and UI screenshots
-├── wazuh/
-│   ├── README.md              ← Wazuh deployment and configuration
-│   ├── config/                ← Docker compose and config files
-│   └── screenshots/
-├── elk-stack/
-│   ├── README.md
-│   ├── config/
-│   └── screenshots/
-├── snort/
-│   ├── README.md
-│   ├── config/
-│   └── screenshots/
-├── velociraptor/
-│   ├── README.md
-│   ├── config/
-│   └── screenshots/
-├── shuffle/
-│   ├── README.md
-│   ├── config/
-│   └── screenshots/
-└── misp/
-├── README.md
-├── config/
-└── screenshots/
+## Wazuh Deployment
+
+Wazuh is deployed as a single-node stack using the official [wazuh-docker](https://github.com/wazuh/wazuh-docker) repository, pinned to tag **v4.14.5**. Three containers run: `wazuh.manager`, `wazuh.indexer`, and `wazuh.dashboard`. The dashboard is reachable at `https://192.168.3.71` on the host LAN.
+
+**Docker data root migrated to HDD.** The default `/var/lib/docker` location lives on the 256 GB SSD, which is too small for indexer data over time. Docker's data root was moved to `/mnt/hdd/docker/data` by editing `/etc/docker/daemon.json`:
+
+```json
+{
+  "data-root": "/mnt/hdd/docker/data"
+}
+```
+
+Existing images and volumes were rsynced over before restarting the Docker service.
+
+**Kernel parameter for the indexer.** The Wazuh indexer (OpenSearch) requires a higher `vm.max_map_count` than the Ubuntu default. Set persistently in `/etc/sysctl.d/99-wazuh.conf`:
+
+```
+vm.max_map_count=262144
+```
+
+Applied with `sudo sysctl --system`.
+
+### Screenshots
+
+![Wazuh login screen](setup/screenshots/01-wazuh-login-screen.png)
+
+![Wazuh dashboard overview](setup/screenshots/02-wazuh-dashboard.png)
+
+![Wazuh agents page — no agents enrolled yet](setup/screenshots/03-wazuh-agents-page.png)
 
 ---
 
-## Skills Demonstrated
+## What I'm Currently Learning
 
-- Docker containerisation and orchestration
-- SIEM deployment, configuration, and rule tuning
-- Network intrusion detection and alert analysis
-- Endpoint detection and incident investigation
-- Log ingestion, parsing, and visualisation
-- Security orchestration and automated response
-- Threat intelligence integration and feed management
-- Incident documentation and reporting
+- Detection engineering basics
+- Rule writing in Wazuh (decoders, rules, ruleset structure)
+- Log source onboarding
+- MITRE ATT&CK framework
+- Studying for CompTIA Security+ — exam scheduled end of May 2026
 
 ---
 
-## Certifications In Progress
+## Next Steps
 
-- CompTIA Security+ (SY0-701)
+- Enroll first agent (the Linux server itself) into the Wazuh manager
+- Write 2–3 custom Wazuh rules for SSH brute-force detection
+- Deploy ELK as a second SIEM for side-by-side comparison
 
 ---
 
 ## About
 
-Built by Hassan — University of Greenwich graduate in Cybersecurity.  
-Targeting SOC Analyst, Security Engineer, and IT Risk roles across  
-Kenya, South Africa, and Europe.
-
-GitHub: [hassanwardhere](https://github.com/hassanwardhere)  
-LinkedIn: https://www.linkedin.com/in/hassan-abdullahi-/  
-Portfolio: [hassanahassan.com](https://hassanahassan.com)
+Hassan Abdulahi Hassan — BSc Computing, University of Greenwich (April 2026). Based in Nairobi, Kenya.
