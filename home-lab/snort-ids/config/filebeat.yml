@@ -1,0 +1,81 @@
+###################### Filebeat Configuration #########################
+# Project: Home Lab IDS
+# Author: Hassan Abdulahi Hassan
+# Description: Filebeat configuration for Snort IDS logs
+
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /var/log/snort/alert.json
+    - /var/log/snort/snort.log.*
+  fields:
+    log_source: snort_ids
+    sensor_name: home-lab-snort
+  fields_under_root: true
+  json.keys_under_root: true
+  json.add_error_key: true
+  multiline.pattern: '^\{'
+  multiline.negate: true
+  multiline.match: after
+
+# Additional log file for unified2 alerts
+- type: log
+  enabled: true
+  paths:
+    - /var/log/snort/*.log
+  fields:
+    log_source: snort_ids_unified
+    sensor_name: home-lab-snort
+  fields_under_root: true
+
+# Filebeat modules
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+
+# Logstash output configuration
+output.logstash:
+  hosts: ["localhost:5044"]
+  ssl.enabled: false
+
+# Elasticsearch output (alternative)
+# output.elasticsearch:
+#   hosts: ["localhost:9200"]
+#   index: "snort-ids-%{+yyyy.MM.dd}"
+
+# Console output for debugging (comment out in production)
+# output.console:
+#   pretty: true
+
+# Processors
+processors:
+  - add_host_metadata:
+      when.not.contains.tags: forwarded
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+  - add_kubernetes_metadata: ~
+  - decode_json_fields:
+      fields: ["message"]
+      target: "snort"
+      overwrite_keys: true
+
+# Logging configuration
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat
+  keepfiles: 7
+  permissions: 0644
+
+# Monitoring
+monitoring.enabled: true
+monitoring.elasticsearch:
+  hosts: ["localhost:9200"]
+
+# Queue configuration
+queue.mem:
+  events: 4096
+  flush.min_events: 512
+  flush.timeout: 5s

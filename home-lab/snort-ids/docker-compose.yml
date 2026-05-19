@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  snort:
+    image: ciscotalos/snort3:latest
+    container_name: snort-ids
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - ./config/snort.conf:/etc/snort/snort.conf:ro
+      - ./config/local.rules:/etc/snort/rules/local.rules:ro
+      - /mnt/hdd/snort/logs:/var/log/snort
+      - ./config/pulledpork.conf:/etc/snort/pulledpork.conf:ro
+    command: >
+      snort -c /etc/snort/snort.conf
+      -i eth0
+      -A alert_fast
+      -s 65535
+      -k none
+      -l /var/log/snort
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "5"
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.11.0
+    container_name: snort-filebeat
+    user: root
+    volumes:
+      - /mnt/hdd/snort/logs:/var/log/snort:ro
+      - ./config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - snort
+    restart: unless-stopped
+    command: ["--strict.perms=false"]
+
+volumes:
+  snort_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/hdd/snort/logs

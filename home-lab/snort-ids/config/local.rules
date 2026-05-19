@@ -1,0 +1,129 @@
+#------------------------------------------------------------------------------
+# Snort Local Rules - Custom Detection Rules
+# Project: Home Lab IDS
+# Author: Hassan Abdulahi Hassan
+# Description: Custom rules for detecting common attacks
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+# SSH Brute Force Detection
+#------------------------------------------------------------------------------
+# Alert on multiple failed SSH login attempts
+alert tcp any any -> any 22 (msg:"[SNORT] SSH Brute Force - Multiple Login Attempts"; flow:to_server,established; content:"SSH-"; depth:4; detection_filter:track by_src, count 5, seconds 60; sid:1000001; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://attack.mitre.org/techniques/T1110/; classtype:attempted-admin;)
+
+# Alert on SSH connection attempts with unusual patterns
+alert tcp any any -> any 22 (msg:"[SNORT] SSH Suspicious Connection Pattern"; flow:to_server,established; content:"SSH-"; depth:4; pcre:"/^SSH-\d\.\d{1,}[^\r\n]*$/i"; detection_filter:track by_src, count 10, seconds 120; sid:1000002; rev:1; metadata:impact_flag red, policy balanced-ips alert, policy security-ips drop; reference:url,https://attack.mitre.org/techniques/T1021/; classtype:attempted-admin;)
+
+# SSH brute force detection - authentication failures
+alert tcp any any -> any 22 (msg:"[SNORT] SSH Brute Force - Auth Failure Pattern"; flow:to_server,established; flags:PA; content:"password"; nocase; detection_filter:track by_src, count 6, seconds 60; sid:1000003; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://attack.mitre.org/techniques/T1110/; classtype:attempted-admin;)
+
+#------------------------------------------------------------------------------
+# Port Scan Detection
+#------------------------------------------------------------------------------
+# SYN Scan Detection
+alert tcp any any -> any any (msg:"[SNORT] Port Scan - SYN Scan Detected"; flags:S,12; detection_filter:track by_src, count 20, seconds 10; sid:1000010; rev:1; metadata:impact_flag red, policy balanced-ips alert, policy security-ips drop; reference:url,https://attack.mitre.org/techniques/T1046/; classtype:attempted-recon;)
+
+# FIN Scan Detection
+alert tcp any any -> any any (msg:"[SNORT] Port Scan - FIN Scan Detected"; flags:F,12; detection_filter:track by_src, count 15, seconds 10; sid:1000011; rev:1; metadata:impact_flag red, policy balanced-ips alert, policy security-ips drop; reference:url,https://attack.mitre.org/techniques/T1046/; classtype:attempted-recon;)
+
+# NULL Scan Detection (no flags set)
+alert tcp any any -> any any (msg:"[SNORT] Port Scan - NULL Scan Detected"; flags:0,12; detection_filter:track by_src, count 15, seconds 10; sid:1000012; rev:1; metadata:impact_flag red, policy balanced-ips alert, policy security-ips drop; reference:url,https://attack.mitre.org/techniques/T1046/; classtype:attempted-recon;)
+
+# XMAS Scan Detection (FIN, URG, PUSH)
+alert tcp any any -> any any (msg:"[SNORT] Port Scan - XMAS Scan Detected"; flags:FPU,12; detection_filter:track by_src, count 15, seconds 10; sid:1000013; rev:1; metadata:impact_flag red, policy balanced-ips alert, policy security-ips drop; reference:url,https://attack.mitre.org/techniques/T1046/; classtype:attempted-recon;)
+
+# ACK Scan Detection
+alert tcp any any -> any any (msg:"[SNORT] Port Scan - ACK Scan Detected"; flags:A,12; detection_filter:track by_src, count 20, seconds 10; sid:1000014; rev:1; metadata:impact_flag red, policy balanced-ips alert, policy security-ips drop; reference:url,https://attack.mitre.org/techniques/T1046/; classtype:attempted-recon;)
+
+# UDP Scan Detection
+alert udp any any -> any any (msg:"[SNORT] Port Scan - UDP Scan Detected"; detection_filter:track by_src, count 20, seconds 10; sid:1000015; rev:1; metadata:impact_flag red, policy balanced-ips alert, policy security-ips drop; reference:url,https://attack.mitre.org/techniques/T1046/; classtype:attempted-recon;)
+
+# Vertical Port Scan Detection (single host, multiple ports)
+alert tcp any any -> any [1:1024] (msg:"[SNORT] Port Scan - Vertical Scan on Well-known Ports"; detection_filter:track by_src, count 30, seconds 30; sid:1000016; rev:1; metadata:impact_flag red, policy balanced-ips alert, policy security-ips drop; reference:url,https://attack.mitre.org/techniques/T1046/; classtype:attempted-recon;)
+
+# Horizontal Port Scan Detection (multiple hosts, single port)
+alert tcp any any -> any any (msg:"[SNORT] Port Scan - Horizontal Scan Detected"; detection_filter:track by_src, count 15, seconds 30; sid:1000017; rev:1; metadata:impact_flag red, policy balanced-ips alert, policy security-ips drop; reference:url,https://attack.mitre.org/techniques/T1046/; classtype:attempted-recon;)
+
+#------------------------------------------------------------------------------
+# Web Attack Detection - SQL Injection
+#------------------------------------------------------------------------------
+# SQL Injection - Union Select
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] SQL Injection - UNION SELECT Detected"; flow:to_server,established; content:"UNION"; nocase; http_uri; content:"SELECT"; nocase; http_uri; distance:0; within:50; sid:1000020; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/SQL_Injection; reference:url,https://attack.mitre.org/techniques/T1190/; classtype:web-application-attack;)
+
+# SQL Injection - Basic SELECT Statement
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] SQL Injection - SELECT Statement"; flow:to_server,established; content:"SELECT"; nocase; http_uri; pcre:"/SELECT\s+.*FROM/iU"; sid:1000021; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/SQL_Injection; reference:url,https://attack.mitre.org/techniques/T1190/; classtype:web-application-attack;)
+
+# SQL Injection - Comment Sequence
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] SQL Injection - Comment Sequence"; flow:to_server,established; content:"/\*"; http_uri; content:"\*/"; http_uri; distance:0; within:100; sid:1000022; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/SQL_Injection; reference:url,https://attack.mitre.org/techniques/T1190/; classtype:web-application-attack;)
+
+# SQL Injection - OR 1=1 Bypass
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] SQL Injection - OR 1=1 Authentication Bypass"; flow:to_server,established; pcre:"/['\"]\s*OR\s*['\"]?1['\"]?\s*=\s*['\"]?1/i"; http_uri; sid:1000023; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/SQL_Injection; reference:url,https://attack.mitre.org/techniques/T1190/; classtype:web-application-attack;)
+
+# SQL Injection - DROP TABLE
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] SQL Injection - DROP TABLE Attempt"; flow:to_server,established; content:"DROP"; nocase; http_uri; content:"TABLE"; nocase; http_uri; distance:0; within:20; sid:1000024; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/SQL_Injection; reference:url,https://attack.mitre.org/techniques/T1190/; classtype:web-application-attack;)
+
+# SQL Injection - Stored Procedure Execution
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] SQL Injection - xp_cmdshell Execution"; flow:to_server,established; content:"xp_cmdshell"; nocase; http_uri; sid:1000025; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/SQL_Injection; reference:url,https://attack.mitre.org/techniques/T1190/; classtype:web-application-attack;)
+
+# SQL Injection - Sleep Function (Time-based blind SQLi)
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] SQL Injection - Time-based Blind SQLi (SLEEP)"; flow:to_server,established; content:"SLEEP"; nocase; http_uri; sid:1000026; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/SQL_Injection; reference:url,https://attack.mitre.org/techniques/T1190/; classtype:web-application-attack;)
+
+# SQL Injection - WaitFor Delay
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] SQL Injection - Time-based Blind SQLi (WAITFOR)"; flow:to_server,established; content:"WAITFOR"; nocase; http_uri; content:"DELAY"; nocase; http_uri; distance:0; within:20; sid:1000027; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/SQL_Injection; reference:url,https://attack.mitre.org/techniques/T1190/; classtype:web-application-attack;)
+
+# SQL Injection - LOAD_FILE
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] SQL Injection - File Access (LOAD_FILE)"; flow:to_server,established; content:"LOAD_FILE"; nocase; http_uri; sid:1000028; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/SQL_Injection; reference:url,https://attack.mitre.org/techniques/T1190/; classtype:web-application-attack;)
+
+# SQL Injection - INTO OUTFILE
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] SQL Injection - File Write (INTO OUTFILE)"; flow:to_server,established; content:"INTO"; nocase; http_uri; content:"OUTFILE"; nocase; http_uri; distance:0; within:20; sid:1000029; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/SQL_Injection; reference:url,https://attack.mitre.org/techniques/T1190/; classtype:web-application-attack;)
+
+#------------------------------------------------------------------------------
+# Web Attack Detection - Cross-Site Scripting (XSS)
+#------------------------------------------------------------------------------
+# XSS - Script Tag Detection
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] XSS Attack - Script Tag Detected"; flow:to_server,established; content:"<script"; nocase; http_uri; sid:1000030; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/xss/; reference:url,https://attack.mitre.org/techniques/T1189/; classtype:web-application-attack;)
+
+# XSS - JavaScript Protocol
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] XSS Attack - JavaScript Protocol"; flow:to_server,established; content:"javascript:"; nocase; http_uri; sid:1000031; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/xss/; reference:url,https://attack.mitre.org/techniques/T1189/; classtype:web-application-attack;)
+
+# XSS - onEvent Handler
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] XSS Attack - onEvent Handler"; flow:to_server,established; pcre:"/\bon\w+\s*=\s*['\"]?/i"; http_uri; sid:1000032; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/xss/; reference:url,https://attack.mitre.org/techniques/T1189/; classtype:web-application-attack;)
+
+# XSS - HTML Entity Encoding
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] XSS Attack - HTML Entity Encoding"; flow:to_server,established; content:"&#"; http_uri; pcre:"/&#x?[0-9a-f]+;/i"; sid:1000033; rev:1; metadata:impact_flag red, policy balanced-ips alert, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/xss/; reference:url,https://attack.mitre.org/techniques/T1189/; classtype:web-application-attack;)
+
+# XSS - alert() Function
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] XSS Attack - alert() Function"; flow:to_server,established; content:"alert"; nocase; http_uri; content:"("; http_uri; distance:0; within:10; sid:1000034; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/xss/; reference:url,https://attack.mitre.org/techniques/T1189/; classtype:web-application-attack;)
+
+# XSS - document.cookie Access
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] XSS Attack - Cookie Theft (document.cookie)"; flow:to_server,established; content:"document.cookie"; nocase; http_uri; sid:1000035; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/xss/; reference:url,https://attack.mitre.org/techniques/T1189/; classtype:web-application-attack;)
+
+# XSS - eval() Function
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] XSS Attack - eval() Function"; flow:to_server,established; content:"eval"; nocase; http_uri; content:"("; http_uri; distance:0; within:5; sid:1000036; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/xss/; reference:url,https://attack.mitre.org/techniques/T1189/; classtype:web-application-attack;)
+
+# XSS - document.write
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] XSS Attack - document.write Injection"; flow:to_server,established; content:"document.write"; nocase; http_uri; sid:1000037; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/xss/; reference:url,https://attack.mitre.org/techniques/T1189/; classtype:web-application-attack;)
+
+#------------------------------------------------------------------------------
+# Additional Web Attacks
+#------------------------------------------------------------------------------
+# Directory Traversal
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] Web Attack - Directory Traversal"; flow:to_server,established; content:"../"; http_uri; sid:1000040; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/Path_Traversal; reference:url,https://attack.mitre.org/techniques/T1083/; classtype:web-application-attack;)
+
+# Double Dot URL Encoding
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] Web Attack - Directory Traversal (URL Encoded)"; flow:to_server,established; content:"..%2f"; nocase; http_uri; sid:1000041; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/Path_Traversal; reference:url,https://attack.mitre.org/techniques/T1083/; classtype:web-application-attack;)
+
+# Null Byte Injection
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] Web Attack - Null Byte Injection"; flow:to_server,established; content:"%00"; http_uri; sid:1000042; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/vulnerabilities/Null_Byte_Injection; reference:url,https://attack.mitre.org/techniques/T1055/; classtype:web-application-attack;)
+
+# Remote File Inclusion (RFI)
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] Web Attack - Remote File Inclusion"; flow:to_server,established; pcre:"/=(https?|ftp):\/\//i"; http_uri; sid:1000043; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/vulnerabilities/Remote_File_Inclusion; reference:url,https://attack.mitre.org/techniques/T1105/; classtype:web-application-attack;)
+
+# Local File Inclusion (LFI) - /etc/passwd
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] Web Attack - Local File Inclusion (/etc/passwd)"; flow:to_server,established; content:"/etc/passwd"; http_uri; sid:1000044; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/vulnerabilities/Local_File_Inclusion; reference:url,https://attack.mitre.org/techniques/T1083/; classtype:web-application-attack;)
+
+# Command Injection - Semicolon
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] Web Attack - Command Injection"; flow:to_server,established; content:";"; http_uri; pcre:"/;\s*(cat|ls|pwd|whoami|id|wget|curl|nc|netcat|bash|sh|cmd|powershell)/i"; http_uri; sid:1000045; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/attacks/Command_Injection; reference:url,https://attack.mitre.org/techniques/T1059/; classtype:web-application-attack;)
+
+# PHP Code Injection
+alert tcp any any -> any $HTTP_PORTS (msg:"[SNORT] Web Attack - PHP Code Injection"; flow:to_server,established; content:"<?php"; nocase; http_uri; sid:1000046; rev:1; metadata:impact_flag red, policy balanced-ips drop, policy security-ips drop; reference:url,https://owasp.org/www-community/vulnerabilities/Code_Injection; reference:url,https://attack.mitre.org/techniques/T1059/; classtype:web-application-attack;)
