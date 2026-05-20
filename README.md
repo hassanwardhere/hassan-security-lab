@@ -19,14 +19,14 @@ This is a personal SOC learning environment built to practice detection engineer
 
 ## Status
 
-| Tool                          | Status       | Notes                                                                                  |
-|-------------------------------|--------------|----------------------------------------------------------------------------------------|
-| Wazuh 4.14.5 (single-node)    | ✅ Deployed  | Manager + Indexer + Dashboard via official docker-compose, data on HDD                 |
-| ELK Stack                     | ⏳ Planned   | Folder placeholder only                                                                |
-| Snort IDS                     | ⏳ Planned   | Folder placeholder only                                                                |
-| Velociraptor                  | ⏳ Planned   | Folder placeholder only                                                                |
-| MISP                          | ⏳ Planned   | Folder placeholder only                                                                |
-| Shuffle SOAR                  | ⏳ Planned   | Folder placeholder only                                                                |
+| Tool                          | Status         | Notes                                                                                  |
+|-------------------------------|----------------|----------------------------------------------------------------------------------------|
+| Wazuh 4.14.5 (single-node)    | ✅ Deployed    | Manager + Indexer + Dashboard via official docker-compose, data on HDD                 |
+| ELK Stack                     | ✅ Deployed    | Integrated with Wazuh for log analysis and visualization                               |
+| Snort IDS                     | ✅ Deployed    | 46 custom rules configured                                                             |
+| Shuffle SOAR                  | ⏳ In Progress | Automation workflows being developed                                                   |
+| MISP                          | ⏳ In Progress | Threat intelligence platform setup in progress                                         |
+| Velociraptor                  | ⏳ Planned     | Endpoint visibility and forensics — planned deployment                                 |
 
 ---
 
@@ -51,14 +51,6 @@ vm.max_map_count=262144
 ```
 
 Applied with `sudo sysctl --system`.
-
-### Screenshots
-
-![Wazuh login screen](setup/screenshots/01-wazuh-login-screen.png)
-
-![Wazuh dashboard overview](setup/screenshots/02-wazuh-dashboard.png)
-
-![Wazuh agents page — no agents enrolled yet](setup/screenshots/03-wazuh-agents-page.png)
 
 ---
 
