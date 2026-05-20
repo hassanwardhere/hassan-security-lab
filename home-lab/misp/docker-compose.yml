@@ -1,0 +1,68 @@
+services:
+  misp:
+    image: nukib/misp:latest
+    container_name: misp
+    hostname: misp
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      - MYSQL_HOST=misp-db
+      - MYSQL_DATABASE=misp
+      - MYSQL_USER=misp
+      - MYSQL_PASSWORD=${MISP_MYSQL_PASSWORD:-changeme}
+      - MYSQL_ROOT_PASSWORD=${MISP_MYSQL_ROOT_PASSWORD:-rootchangeme}
+      - REDIS_HOST=misp-redis
+      - MISP_ORG=${MISP_ORG:-HassanSecurityLab}
+      - MISP_ORG_UUID=${MISP_ORG_UUID:-a0b1c2d3-e4f5-6789-abcd-ef0123456789}
+      - MISP_UUID=${MISP_UUID:-b1c2d3e4-f5a6-7890-bcde-f01234567890}
+      - MISP_EMAIL=${MISP_EMAIL:-admin@hassansecurity.lab}
+      - MISP_ADMIN_EMAIL=${MISP_ADMIN_EMAIL:-admin@admin.test}
+      - MISP_ADMIN_PASSPHRASE=${MISP_ADMIN_PASS:-changeme}
+      - MISP_BASEURL=${MISP_BASEURL:-http://192.168.3.71:8080}
+      - TIMEZONE=${TIMEZONE:-Africa/Nairobi}
+    volumes:
+      - misp-config:/var/www/MISP/app/Config
+      - misp-logs:/var/www/MISP/app/tmp/logs
+      - misp-files:/var/www/MISP/app/files
+    depends_on:
+      - misp-db
+      - misp-redis
+    networks:
+      - misp-network
+
+  misp-db:
+    image: mariadb:10.11
+    container_name: misp-db
+    hostname: misp-db
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MISP_MYSQL_ROOT_PASSWORD:-rootchangeme}
+      - MYSQL_DATABASE=misp
+      - MYSQL_USER=misp
+      - MYSQL_PASSWORD=${MISP_MYSQL_PASSWORD:-changeme}
+    volumes:
+      - misp-mysql:/var/lib/mysql
+    networks:
+      - misp-network
+
+  misp-redis:
+    image: redis:7-alpine
+    container_name: misp-redis
+    restart: unless-stopped
+    networks:
+      - misp-network
+
+volumes:
+  misp-config:
+    driver: local
+  misp-logs:
+    driver: local
+  misp-files:
+    driver: local
+  misp-mysql:
+    driver: local
+
+networks:
+  misp-network:
+    driver: bridge
