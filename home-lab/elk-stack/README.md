@@ -137,7 +137,9 @@ docker logs filebeat
 
 ## Screenshots
 
-See `screenshots/` directory for:
+- ![Kibana Welcome](screenshots/kibana-welcome.png) — Kibana initial setup screen
+
+See `screenshots/` directory for additional images:
 - Kibana Discover interface
 - Elasticsearch index management
 - Log pipeline monitoring

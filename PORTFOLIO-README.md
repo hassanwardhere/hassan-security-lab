@@ -22,7 +22,7 @@ This is a personal SOC learning environment built to practice detection engineer
 | Tool                          | Status       | Notes                                                                                  |
 |-------------------------------|--------------|----------------------------------------------------------------------------------------|
 | Wazuh 4.14.5 (single-node)    | ✅ Deployed  | Manager + Indexer + Dashboard via official docker-compose, data on HDD                 |
-| ELK Stack                     | ⏳ Planned   | Folder placeholder only                                                                |
+| ELK Stack                   | ✅ Deployed  | Elasticsearch + Logstash + Kibana integrated with Wazuh |
 | Snort IDS                     | ⏳ Planned   | Folder placeholder only                                                                |
 | Velociraptor                  | ⏳ Planned   | Folder placeholder only                                                                |
 | MISP                          | ⏳ Planned   | Folder placeholder only                                                                |
@@ -54,11 +54,17 @@ Applied with `sudo sysctl --system`.
 
 ### Screenshots
 
-![Wazuh login screen](setup/screenshots/01-wazuh-login-screen.png)
+![Wazuh login screen](home-lab/wazuh/screenshots/01-wazuh-login-screen.png)
 
-![Wazuh dashboard overview](setup/screenshots/02-wazuh-dashboard.png)
+![Wazuh dashboard overview](home-lab/wazuh/screenshots/02-wazuh-dashboard.png)
 
-![Wazuh agents page — no agents enrolled yet](setup/screenshots/03-wazuh-agents-page.png)
+![Wazuh agents page — no agents enrolled yet](home-lab/wazuh/screenshots/03-wazuh-agents-page.png)
+
+![Wazuh security events](home-lab/wazuh/screenshots/wazuh-security-events.png)
+
+![Wazuh threat hunting](home-lab/wazuh/screenshots/wazuh-threat-hunting.png)
+
+![Wazuh rules management](home-lab/wazuh/screenshots/wazuh-rules.png)
 
 ---
 
