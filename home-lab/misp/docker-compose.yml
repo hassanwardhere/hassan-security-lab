@@ -8,6 +8,7 @@ services:
       - "8080:80"
     environment:
       - MYSQL_HOST=misp-db
+      - MYSQL_LOGIN=misp
       - MYSQL_DATABASE=misp
       - MYSQL_USER=misp
       - MYSQL_PASSWORD=${MISP_MYSQL_PASSWORD:-changeme}
@@ -20,6 +21,7 @@ services:
       - MISP_ADMIN_EMAIL=${MISP_ADMIN_EMAIL:-admin@admin.test}
       - MISP_ADMIN_PASSPHRASE=${MISP_ADMIN_PASS:-changeme}
       - MISP_BASEURL=${MISP_BASEURL:-http://192.168.3.71:8080}
+      - SECURITY_SALT=${MISP_SECURITY_SALT:-longrandomstringthatshouldbe32charsminimum}
       - TIMEZONE=${TIMEZONE:-Africa/Nairobi}
     volumes:
       - misp-config:/var/www/MISP/app/Config
