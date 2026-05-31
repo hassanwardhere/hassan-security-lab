@@ -14,7 +14,7 @@
 | 3 | Snort IDS | ✅ Done | — | 46 custom detection rules |
 | 4 | Velociraptor EDR | ✅ Done | 1374d81 | Documented, Docker compose config |
 | 5 | Shuffle SOAR | ✅ Done | — | Documented, Wazuh + MISP integration |
-| 6 | MISP Threat Intel | 🔄 In Progress | — | DB issues resolved, needs live deployment docs |
+| 6 | MISP Threat Intel | ✅ Done | 8543f34 | Fully deployed, docker-compose fixed, Wazuh CDB integration documented |
 
 ---
 
