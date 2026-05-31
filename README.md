@@ -25,8 +25,8 @@ This is a personal SOC learning environment built to practice detection engineer
 | ELK Stack                     | ✅ Deployed    | Integrated with Wazuh for log analysis and visualization                               |
 | Snort IDS                     | ✅ Deployed    | 46 custom rules configured                                                             |
 | Shuffle SOAR                  | ⏳ In Progress | Automation workflows being developed                                                   |
-| MISP                          | ⏳ In Progress | Threat intelligence platform setup in progress                                         |
-| Velociraptor                  | ⏳ Planned     | Endpoint visibility and forensics — planned deployment                                 |
+| MISP                          | ✅ Deployed    | Live at port 8080, Wazuh CDB integration documented                                    |
+| Velociraptor                  | ✅ Deployed    | Docker compose config, documentation complete (commit 1374d81)                         |
 
 ---
 
