@@ -1,7 +1,7 @@
 # Hassan Security Lab — Portfolio Roadmap
 
 > **Managed by Hermes (Jupiter)**. Update status after each completed task.
-> Last updated: 2026-05-29
+> Last updated: 2026-06-03
 
 ---
 
@@ -22,7 +22,7 @@
 
 | # | Project | Status | Commit | Notes |
 |---|---------|--------|--------|-------|
-| 7 | Python Vulnerability Scanner | ⏳ Pending | — | Port scan + CVE check + report |
+| 7 | Python Vulnerability Scanner | ✅ Done | ac7d1b3 | TCP scan, service detection, NVD CVE lookup, markdown reports |
 | 8 | Log Analysis Automation | ⏳ Pending | — | Parses auth logs, detects brute force |
 | 9 | File Integrity Monitor | ⏳ Pending | — | Detects file changes, Telegram alerts |
 
@@ -51,8 +51,8 @@
 
 | Date | Task |
 |------|------|
-| 2026-05-30 (Sat) | MISP — complete live deployment docs |
-| 2026-06-02 (Tue) | Python Vulnerability Scanner |
+| 2026-05-30 (Sat) | MISP — complete live deployment docs — ✅ Done |
+| 2026-06-03 (Wed) | Python Vulnerability Scanner — ✅ Done |
 | 2026-06-04 (Thu) | Log Analysis Automation Script |
 | 2026-06-06 (Sat) | File Integrity Monitor |
 | 2026-06-09 (Tue) | Docker Security Hardening |
