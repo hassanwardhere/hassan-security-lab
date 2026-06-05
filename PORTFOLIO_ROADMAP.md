@@ -1,7 +1,7 @@
 # Hassan Security Lab — Portfolio Roadmap
 
 > **Managed by Hermes (Jupiter)**. Update status after each completed task.
-> Last updated: 2026-06-03
+> Last updated: 2026-06-05
 
 ---
 
@@ -23,7 +23,7 @@
 | # | Project | Status | Commit | Notes |
 |---|---------|--------|--------|-------|
 | 7 | Python Vulnerability Scanner | ✅ Done | ac7d1b3 | TCP scan, service detection, NVD CVE lookup, markdown reports |
-| 8 | Log Analysis Automation | ⏳ Pending | — | Parses auth logs, detects brute force |
+| 8 | Log Analysis Automation | ✅ Done | — | Parses auth logs, SSH brute force detection, markdown reports |
 | 9 | File Integrity Monitor | ⏳ Pending | — | Detects file changes, Telegram alerts |
 
 ---
@@ -53,7 +53,7 @@
 |------|------|
 | 2026-05-30 (Sat) | MISP — complete live deployment docs — ✅ Done |
 | 2026-06-03 (Wed) | Python Vulnerability Scanner — ✅ Done |
-| 2026-06-04 (Thu) | Log Analysis Automation Script |
+| 2026-06-04 (Thu) | Log Analysis Automation Script — ✅ Done |
 | 2026-06-06 (Sat) | File Integrity Monitor |
 | 2026-06-09 (Tue) | Docker Security Hardening |
 | 2026-06-11 (Thu) | Cloudflare Security Write-up |
@@ -73,4 +73,3 @@ When completing a project:
 5. Send Telegram confirmation with commit URL
 
 Next pending task: Check this file first before starting any portfolio work.
-

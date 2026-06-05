@@ -6,27 +6,29 @@ This is a personal SOC learning environment built to practice detection engineer
 
 ## Hardware
 
-| Component | Details                                  |
-|-----------|------------------------------------------|
-| Device    | HP Envy laptop                           |
-| CPU       | AMD A12-9720P (4 cores)                  |
-| RAM       | 14 GB                                    |
-| Storage   | 256 GB NVMe SSD (root) + 1 TB HDD        |
-| HDD mount | `/mnt/hdd`                               |
-| OS        | Ubuntu Desktop 24.04                     |
+| Component | Details |
+|-----------|---------|
+| Device | HP Envy laptop |
+| CPU | AMD A12-9720P (4 cores) |
+| RAM | 14 GB |
+| Storage | 256 GB NVMe SSD (root) + 1 TB HDD |
+| HDD mount | `/mnt/hdd` |
+| OS | Ubuntu Desktop 24.04 |
 
 ---
 
 ## Status
 
-| Tool                          | Status       | Notes                                                                                  |
-|-------------------------------|--------------|----------------------------------------------------------------------------------------|
-| Wazuh 4.14.5 (single-node)    | ✅ Deployed  | Manager + Indexer + Dashboard via official docker-compose, data on HDD                 |
-| ELK Stack                   | ✅ Deployed  | Elasticsearch + Logstash + Kibana integrated with Wazuh |
-| Snort IDS                     | ⏳ Planned   | Folder placeholder only                                                                |
-| Velociraptor                  | ⏳ Planned   | Folder placeholder only                                                                |
-| MISP                          | ⏳ Planned   | Folder placeholder only                                                                |
-| Shuffle SOAR                  | ⏳ Planned   | Folder placeholder only                                                                |
+| Tool | Status | Notes |
+|------|--------|-------|
+| Wazuh 4.14.5 (single-node) | ✅ Deployed | Manager + Indexer + Dashboard via official docker-compose, data on HDD |
+| ELK Stack | ✅ Deployed | Elasticsearch + Logstash + Kibana, integrated with Wazuh |
+| Snort IDS | ✅ Deployed | 46 custom detection rules |
+| Velociraptor EDR | ✅ Deployed | Docker compose config, documentation complete |
+| MISP Threat Intel | ✅ Deployed | Live at port 8080, Wazuh CDB integration documented |
+| Shuffle SOAR | ✅ Deployed | Automation workflows, Wazuh + MISP integration |
+| Vulnerability Scanner | ✅ Deployed | TCP port scanner with CVE lookup via NVD API |
+| Log Analysis Automation | ✅ Deployed | Parses auth logs, detects SSH brute force attempts |
 
 ---
 
@@ -52,37 +54,17 @@ vm.max_map_count=262144
 
 Applied with `sudo sysctl --system`.
 
-### Screenshots
-
-![Wazuh login screen](home-lab/wazuh/screenshots/01-wazuh-login-screen.png)
-
-![Wazuh dashboard overview](home-lab/wazuh/screenshots/02-wazuh-dashboard.png)
-
-![Wazuh agents page — no agents enrolled yet](home-lab/wazuh/screenshots/03-wazuh-agents-page.png)
-
-![Wazuh security events](home-lab/wazuh/screenshots/wazuh-security-events.png)
-
-![Wazuh threat hunting](home-lab/wazuh/screenshots/wazuh-threat-hunting.png)
-
-![Wazuh rules management](home-lab/wazuh/screenshots/wazuh-rules.png)
-
 ---
 
 ## What I'm Currently Learning
 
-- Detection engineering basics
-- Rule writing in Wazuh (decoders, rules, ruleset structure)
-- Log source onboarding
-- MITRE ATT&CK framework
-- Studying for CompTIA Security+ — exam scheduled end of May 2026
-
----
-
-## Next Steps
-
-- Enroll first agent (the Linux server itself) into the Wazuh manager
-- Write 2–3 custom Wazuh rules for SSH brute-force detection
-- Deploy ELK as a second SIEM for side-by-side comparison
+- Detection engineering and rule writing in Wazuh
+- Log source onboarding and correlation
+- MITRE ATT&CK framework mapping
+- Threat intelligence with MISP
+- Endpoint detection with Velociraptor
+- SOAR workflow development with Shuffle
+- Scripting security automation in Python
 
 ---
 
