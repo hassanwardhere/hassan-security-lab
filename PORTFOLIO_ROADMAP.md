@@ -23,7 +23,7 @@
 | # | Project | Status | Commit | Notes |
 |---|---------|--------|--------|-------|
 | 7 | Python Vulnerability Scanner | ✅ Done | ac7d1b3 | TCP scan, service detection, NVD CVE lookup, markdown reports |
-| 8 | Log Analysis Automation | ✅ Done | — | Parses auth logs, SSH brute force detection, markdown reports |
+| 8 | Log Analysis Automation | ✅ Done | c88f542 | Parses auth logs, SSH brute force detection, markdown reports |
 | 9 | File Integrity Monitor | ⏳ Pending | — | Detects file changes, Telegram alerts |
 
 ---
